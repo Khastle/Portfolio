@@ -1,0 +1,18 @@
+---
+title: "Welcome To My Site!"
+author: "Ryan Curtis"
+date: "2023-07-11"
+categories: [news, about me, post]
+---
+
+This is my first post in a Quarto blog. Welcome!
+
+While this site is mostly about my experience with data and statistics, when I am not playing with data sets, you can most often find me hiking, playing soccer, or just hanging out with my dog. Here's a picture of me and some of my soccer buddies.
+
+![](Soccer.jpg)
+
+My name is Ryan Curtis. I am a young professional looking to break into the world of data. While my undergraduate academic career was the genesis of my interest in statistics, my professional development working at the court has cemented my interest and passion for the field.
+
+I was intially hired a court clerk, performing clerical and customer-centric duties as well as assiting the judge and clerking court proceedings. One day, a yearly survey on probation population came in from the Bureau of Justice Statistics. I leaped at the opportunity to work on a project such as it and my supervisor agreed. I became acquainted with query-based software BIT (Businesses Intelligence Tools) which allowed me to create queries to search and manage our case management database which is made of tens of thousands of cases as it tracks every case since the 90's. Upon completing and submitting the survey, I continued to utilize BIT in conjunction with Microsoft Excel to create tables and visualizations of court data for evaluation by our court administrator and Judge. This way I also became our pseudo court statistician and was promoted to Court Coordinator for our budding Therapeutic Court program.
+
+It then became my responsibility to track data on all participants for usage in evaluations, grants, and surveys, eventually applying for and securing further funding for our program with this very data. I took it upon myself to learn Python in order to enhance my ability to interpret and create visualizations from our data. Since then I have created a number of visualizations and reports for the court for a plethora of purposes ranging from usage in grant applications to secure funding, to evaluations conducted by other agencies or the court itself. My experience working with python has also lead me to conduct some personal side projects solely in the interest of my own curiousity and development (you can check them out on the projects tab on my page!) My time in the professional field of data has been brief but I am excited to continue my journey and enhance both myself and the world around me through the usage of data!

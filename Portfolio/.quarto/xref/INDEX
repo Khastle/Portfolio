@@ -1,0 +1,29 @@
+{
+  "about.qmd": {
+    "about.html": "139a33ce"
+  },
+  "index.qmd": {
+    "index.html": "f6246d44"
+  },
+  "posts/post-with-code/index.qmd": {
+    "index.html": "c83a462b"
+  },
+  "posts/welcome/index.qmd": {
+    "index.html": "7bcf092f"
+  },
+  "resume.qmd": {
+    "resume.html": "647bac59"
+  },
+  "projects.qmd": {
+    "projects.html": "b1460645"
+  },
+  "posts/postwithplot/index.qmd": {
+    "index.html": "b84c6620"
+  },
+  "posts/fifa_spider_plots/index.qmd": {
+    "index.html": "a9476ef7"
+  },
+  "posts/CS50 Lesson 1 Code/index.qmd": {
+    "index.html": "a028f129"
+  }
+}

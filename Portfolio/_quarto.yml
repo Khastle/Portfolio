@@ -1,0 +1,35 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Ryan Curtis"
+  search:
+    location: navbar
+    type: textbox
+  navbar:
+    left:
+      - text: Home
+        href: index.qmd
+      - text: Projects
+        href: projects.qmd
+      - text: Resume
+        href: resume.qmd
+    right:
+      - about.qmd
+      - icon: linkedin
+        href: https://www.linkedin.com/in/ryan-curtis-559b48219/
+      - icon: github
+        href: https://github.com/Khastle
+      - icon: envelope
+        href: mailto:ryancurtisWA@gmail.com
+format:
+  html:
+    theme:
+      light: cosmo
+      dark: darkly
+    css: styles.css
+    code-link: true
+
+editor: visual
+

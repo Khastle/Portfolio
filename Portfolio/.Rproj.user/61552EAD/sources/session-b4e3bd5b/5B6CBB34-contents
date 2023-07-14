@@ -1,0 +1,14 @@
+---
+title: "Post With Plot"
+author: "Me"
+date: "2023-07-11"
+categories: [code, analysis, plot]
+image: "image.jpg"
+jupyter: python3
+---
+
+This is a post with plot.
+
+```{python}
+
+```

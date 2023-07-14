@@ -1,0 +1,315 @@
+---
+title: "Fifa Radar Plots"
+author: "Ryan Curtis"
+format: html
+---
+
+# THE GOAL
+
+For this assignment, I decided to challenge myself a little bit by not using a dataset that I found on Kaggle. In order to find a new data set, I did the reasonable thing and began my frantic google searches. What I found was that there is a plethora of well formatted data out there, most of it is just online as opposed to a nice and easy excel format. With this project I hope to familarize myself with the In's and Out's of webscraping as well as cleaning up a data set to make it "workable".
+
+## The Dataset
+
+I am using the wonderful resource, <sofifa.com>. This site is one big table that contains the fifa stats for any football player who is currently in the fifa system, **which is alot**. The first thing we will do, as always, is we are going to prepare our standard visualization and cleaning packages for usage.
+
+```{python}
+import re
+import json
+import requests
+import pandas as pd
+import seaborn as sns
+import numpy as np
+import matplotlib.pyplot as plt
+import plotly.express as px
+import warnings
+warnings.filterwarnings("ignore")
+```
+
+
+## WEB-SCRAPING
+
+Now, we are going to import a few more with the goal of ***Web-Scraping*** 
+
+```{python}
+import requests
+import json
+from bs4 import BeautifulSoup
+```
+
+Now we want to familiarize ourselves with our website a little bit. Taking a look at the base homepage, we can see that every player has some basic information on display. We can see their Names, Age, Overall, potential, as well as their team and wage they make. Now when we click on an individual player, it gives us a much more thorough breakdown of their individual statistics. We can even see a radar plot, which is exactly what we will be making, however we will be making some adjustments and tweaks to it. 
+
+Looking around the site and some of the pages that are on here
+To begin, I am intested solely in players from the premier league. I need to specify this as my url so I will take this url as my base URL we will use to get general player stats
+
+However, in accessing and web-scraping some websites, they have anti-botting software that can deny our request. Running a normal *request.get()* operation will result in our request being denied. To get around this we will be introducing some extra code as compared to a standard web scrape request.
+
+```{python}
+base_url = "https://sofifa.com/players?type=all&lg%5B0%5D=13&offset=0"
+
+req = requests.Session()
+page = req.get(base_url, headers = {
+  "User-Agent": "Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.3; Win64; x64)"
+})
+soup = BeautifulSoup(page.content, "html.parser")
+```
+
+The main things to note are the usage of the request.session() function, which persists cookies across requests, and the header in *req.get()*, which essentially feeds the site some information to trick it into thinking it is a human making the request as opposed to a program.
+
+## DATA STRUCTURE NAVIGATION
+
+Now that we can actually scrape and get our data, we want to look at our data structure to determine where in it our player data lies. In this case, it stored in a structure called **tbody**, so we want python to grab that class and give us all the information that it holds.
+
+```{python}
+player_data = soup.tbody
+
+```
+
+Alright! It may not be the most legible, but it is definitely a start! It contains all the stats for each player that we could see on the main page, it's just all jumbled up. The next step now is to begin sorting the data into a dictionary that is easily navigable and interpretable. 
+
+By looking through this, we can see that each player's stats start and end with a new class type, **tr**. We can use this information to tell python exactly when to start/stop looking at a player and move onto the next. We can automate this for every player on this list with some loop action
+
+```{python}
+player_list=[] #Create empty list to store all data for each player as a seperate entry in list
+player_dict={ #Create empty dictionary with all the stats to capture, will later be converted to a Pandas dataframe
+  "last_name": [],
+  "position": [],
+  "age": [],
+  "overall": [],
+  "potential": [],
+  "team": [],
+  "contract": [],
+  "value": [],
+  "wage": [],
+  "stats": [],
+  "id": []
+} 
+
+player_list = player_data.find_all("tr") #Seperate each player/stats into a different entry in a list
+for player in player_list:
+  positions = [] #Create blank list to store positions in case there are multiple positions
+  i = 0
+  
+  player_dict["last_name"].append(player.find("div", class_="ellipsis").get_text())
+  
+  #Some players have multiple positions, join all positions into a list, then get_text and merge list, append to dict
+  positions = player.find_all(class_=re.compile("pos")) #Search through classes to find ones that include "pos" 
+  while i != len(positions):
+    positions[i] = positions[i].get_text(strip=True)
+    i = i + 1
+  
+  player_dict["position"].append(" ".join(positions))
+  player_dict["age"].append(player.find("td", class_="col col-ae").get_text())
+  player_dict["overall"].append(player.find("td", class_="col col-oa col-sort").get_text())
+  player_dict["potential"].append(player.find("td", class_="col col-pt").get_text())
+  player_dict["team"].append(player.find(href=re.compile("/team/")).get_text())
+  player_dict["contract"].append(player.find("div", class_="sub").get_text())
+  player_dict["value"].append(player.find("td", class_="col col-vl").get_text())
+  player_dict["wage"].append(player.find("td", class_="col col-wg").get_text())
+  player_dict["stats"].append(player.find("span", class_="bp3-tag p").get_text()) #Not sure what this is for
+  player_dict["id"].append(player.img["id"])
+    
+```
+
+
+Now that we have our data amassed into a dictionary, lets convert it into a Pandas Dataframe and take a look!
+
+```{python}
+players_dataframe=pd.DataFrame(player_dict)
+print(players_dataframe.head(5))
+
+```
+
+This looks pretty good! There are obviously some things that are slightly wrong with our data frame so lets move onto some cleaning!
+
+## DATA CLEANING
+
+Now that we have (some) of our data into a nice looking data frame, let's work on cleaning it up a little bit, not just for the aesthetics, but also the practicality of having a nice, clean data frame to work with.
+
+To start, let's begin with Paring down the names to just include the last name of each player. Eventually we will be manipulating this dataframe to add other columns and stats in so we will re add the first name later. For now we will just drop it.
+```{python}
+#Code to clean up the names
+player_name = players_dataframe.last_name #Create series to iterate through
+for name in player_name:
+  name_split = ""
+  if name.find(".") != -1: #Only returns -1 if unable to find "." character
+    name_split = name.split(". ", 1)
+    players_dataframe["last_name"] = players_dataframe["last_name"].replace(name, name_split[1]) #Replace original dataframe with updated last name
+  else:
+    pass
+  
+#Code to clean up positions
+players_dataframe[["position_1", "position_2", "position_3"]] = players_dataframe.position.str.split(" ", expand = True)
+players_dataframe = players_dataframe.drop(columns="position")
+
+#Code to clean up contract column; We don't (yet) have a way to determine contract specifics if player is on loan, for now just assign them a value showing they are loan 
+contract_length = players_dataframe.contract
+for contract in contract_length:
+  fixed_contract = contract.removeprefix("\n")
+  players_dataframe["contract"] = players_dataframe["contract"].replace(contract, fixed_contract)
+  players_dataframe[["contract_start", "contract_end"]] = players_dataframe.contract.str.split(" ~ ", expand = True)
+  
+  ######THIS LOOP IS NOT WORKING PROPERLY######
+  #if contract.find("On loan") != -1: 
+    #players_dataframe["contract_start"] = players_dataframe["contract_start"].replace(fixed_contract, "on loan")
+    #print(fixed_contract)
+    
+  #else: 
+    #pass
+  
+players_dataframe = players_dataframe.drop(columns="contract")
+
+#Strip currency symbols & suffix from wage and value columns
+players_dataframe["value"] = players_dataframe.value.str.removeprefix("€")
+players_dataframe["wage"] = players_dataframe.wage.str.removeprefix("€")
+#Remove suffix from value, convert to total amounts 
+for value in players_dataframe.value:
+  replace_value = 0
+  if value.find("M") != -1:
+    replace_value = value.removesuffix("M")
+    replace_value = int(float(replace_value)) * 1000000
+    players_dataframe["value"] = players_dataframe["value"].replace(value, replace_value)
+  elif value.find("K") != -1:
+    replace_value = value.removesuffix("K")
+    replace_value = int(float(replace_value)) * 1000
+    players_dataframe["value"] = players_dataframe["value"].replace(value, replace_value)
+  
+#Same thing but with wages
+for wage in players_dataframe.wage:
+  replace_wage = 0
+  if wage.find("M") != -1:
+    replace_wage = wage.removesuffix("M")
+    replace_wage = int(float(replace_wage)) * 1000000
+    players_dataframe["wage"] = players_dataframe["wage"].replace(wage, replace_wage)
+  elif wage.find("K") != -1:
+    replace_wage = wage.removesuffix("K")
+    replace_wage = int(float(replace_wage)) * 1000
+    players_dataframe["wage"] = players_dataframe["wage"].replace(wage, replace_wage)
+
+print(players_dataframe.head, 5)
+```
+
+Alright. So now we have gotten some preliminary information on each player. But the real analysis of their playstyle is really only seen in the semantics. We want to get into the nitty gritty for each of these players and see what picture their stats and abilities paint of their playstyle. Let's see if we can go the extra mile and dig a little deeper on each of these players
+```{python}
+#Rescrape each player's separate stat page
+fifa_stats = { #Create new dictionary to store the fifa values of players different stats, later merge with og df
+  "crossing": [],
+  "finishing": [],
+  "heading_accuracy": [],
+  "short_passing": [],
+  "volleys": [],
+  "dribbling": [],
+  "curve": [],
+  "fk_accuracy": [],
+  "long_passing": [],
+  "ball_control": [],
+  "acceleration": [],
+  "sprint_speed": [],
+  "agility": [],
+  "reactions": [],
+  "balance": [],
+  "shot_power": [],
+  "jumping": [],
+  "stamina": [],
+  "strength": [],
+  "long_shots": [],
+  "aggression": [],
+  "interceptions": [],
+  "positioning": [],
+  "vision": [],
+  "penalties": [],
+  "composure": [],
+  "defensive_awareness": [],
+  "standing_tackle": [],
+  "sliding_tackle": [],
+  "gk_diving": [],
+  "gk_handling": [],
+  "gk_kicking": [],
+  "gk_positioning": [],
+  "gk_reflexes": []
+}
+for player_id in players_dataframe.id:
+  a = 0
+  #Web-Scrape to get fifa stats from webpage
+  base_url = "https://sofifa.com/player/" + player_id
+  req = requests.Session()
+  page = req.get(base_url, headers = {
+    "User-Agent": "Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.3; Win64; x64)"
+  })
+  soup = BeautifulSoup(page.content, "html.parser")
+  
+  #After successful web scrape, grab all stats from page, scrape away ones we don't need, append values to fifa dict
+  player_stats = soup.find_all(class_=re.compile("bp3-tag p p-"))
+  #print(len(player_stats))
+  if len(player_stats) == 66:
+    del player_stats[0:32] #Remove initial entries in list as we only care about the player stats
+  else:
+    del player_stats[0:31] #Some players have only 65 calls bp3-tag objects, take care of those instances as well
+  for stat in fifa_stats:
+    fifa_stats[stat].append(player_stats[a].get_text())
+    a = a + 1
+  fifa_stats_df=pd.DataFrame(fifa_stats)
+
+
+#Now we can join together these two dataframes
+player_stats_df = pd.concat([players_dataframe, fifa_stats_df], axis=1, join="inner")
+print(player_stats_df)
+```
+
+## Visualizations
+
+Alright!  Now our data is looking pretty clean. Now that we know we can grab and clean the figures for a player, let's go ahead and make some radar plots for the data
+
+
+```{python}
+#for usage later in dataframe
+names = ["attacking", "passing", "physicality", "pace", "dribbling", "mentality", "defending", "goalkeeping"]
+average = [0, 0, 0, 0, 0, 0, 0, 0]
+
+#create loop to make categories for each player
+for index, row in player_stats_df.iterrows():
+  
+  #First assign values to a list, then map them as INT, then get mean. Repeat for every point of radar plot
+  attacking_col = [row["finishing"], row["heading_accuracy"], row["volleys"], row["shot_power"], row["long_shots"]]
+  attacking_col = list(map(int, attacking_col))
+  average[0] = np.mean(attacking_col)
+  
+  passing_col = [row["short_passing"], row["long_passing"], row["crossing"], row["fk_accuracy"]]
+  passing_col = list(map(int, passing_col))
+  average[1] = np.mean(passing_col)
+  
+  physicality_col = [row["reactions"], row["balance"], row["strength"], row["jumping"]]
+  physicality_col = list(map(int, physicality_col))
+  average[2] = np.mean(physicality_col)
+  
+  pace_col = [row["acceleration"], row["sprint_speed"], row["agility"]]
+  pace_col = list(map(int, pace_col))
+  average[3] = np.mean(pace_col)
+  
+  dribbling_col = [row["dribbling"], row["ball_control"]]
+  dribbling_col = list(map(int, dribbling_col))
+  average[4] = np.mean(dribbling_col)
+  
+  mentality_col = [row["aggression"], row["positioning"], row["vision"], row["composure"]]
+  mentality_col = list(map(int, mentality_col))
+  average[5] = np.mean(mentality_col)
+  
+  defending_col = [row["interceptions"], row["defensive_awareness"], row["standing_tackle"], row["sliding_tackle"]]
+  defending_col = list(map(int, defending_col))
+  average[6] = np.mean(defending_col)
+  
+  goalkeeping_col = [row["gk_diving"], row["gk_handling"], row["gk_kicking"], row["gk_positioning"], row["gk_reflexes"]]
+  goalkeeping_col = list(map(int, goalkeeping_col))
+  average[7] = np.mean(goalkeeping_col)
+  
+  #Create dataframe to make radar plot
+  data_dict = {"names": names, "average": average} 
+  df = pd.DataFrame(data_dict)
+  
+  #Create and show graphs for every player
+  fig = px.line_polar(df, r="average", theta ="names", line_close=True)
+  fig.update_traces(fill="toself")
+  print("Player:", row["last_name"],",", "Overall:", row["overall"],",",  "Position:", row["position_1"])
+  fig.show()
+  
+```
+

@@ -1,0 +1,165 @@
+---
+title: "CS50 Lesson 1"
+author: "Ryan curtis"
+date: "2023-01-07"
+categories: [CS50, code, analysis]
+image: "cs50.png"
+jupyter: python3
+---
+
+I thought it would be fun to track all of my progress learning python, even the VERY humble beginnings. Any of the posts with the CS50 tag are simply copy/pastes of my code from lessons, along with a copy/paste of what the assignment actually wanted me to do for context. As many of these functions rely on user_input, I took the liberty of adding the code simply as text rather than exectuable code as otherwise the page would not work as it would try to get inputs which cannot be given.
+
+# [**Einstein**](https://cs50.harvard.edu/python/2022/psets/0/einstein/#einstein)
+
+Even if you haven't studied physics (recently or ever!), you might have heard that E=MC\^2, wherein E represents energy (measured in Joules), M represents mass (measured in kilograms), and C represents the speed of light (measured approximately as 300000000 meters per second), per [Albert Einstein](https://en.wikipedia.org/wiki/Albert_Einstein) et al. Essentially, the formula means that mass and energy are equivalent.
+
+In a file called `einstein.py`, implement a program in Python that prompts the user for mass as an integer (in kilograms) and then outputs the equivalent number of Joules as an integer. Assume that the user will input an integer.
+
+```{{python}}
+def main(): #Get user input 
+  user_input = input("Mass:")
+
+#Convert input to integer
+  user_input = int(user_input)
+
+#Multiple Input(mass) by C\^2 & print the result (E)
+  print(user_input * 90000000000000000)
+
+main()
+```
+
+# [**Tip Calculator**](https://cs50.harvard.edu/python/2022/psets/0/tip/#tip-calculator)
+
+> And now for my Wizard tip calculator.
+>
+> --- Morty Seinfeld
+
+In the United States, it's customary to leave a tip for your server after dining in a restaurant, typically an amount equal to 15% or more of your meal's cost. Not to worry, though, we've written a tip calculator for you, below!
+
+```{{python}}
+def main():
+    dollars = dollars_to_float(input("How much was the meal? "))
+    percent = percent_to_float(input("What percentage would you like to tip? "))
+    tip = dollars * percent
+    print(f"Leave ${tip:.2f}")
+
+
+def dollars_to_float(d):
+    # TODO
+
+
+def percent_to_float(p):
+    # TODO
+
+
+main()
+```
+
+Well, we've written *most* of a tip calculator for you. Unfortunately, we didn't have time to implement two functions:
+
+-   `dollars_to_float`, which should accept a `str` as input (formatted as `$##.##`, wherein each `#` is a decimal digit), remove the leading `$`, and return the amount as a `float`. For instance, given `$50.00` as input, it should return `50.0`.
+
+-   `percent_to_float`, which should accept a `str` as input (formatted as `##%`, wherein each `#` is a decimal digit), remove the trailing `%`, and return the percentage as a `float`. For instance, given `15%` as input, it should return `0.15`.
+
+Assume that the user will input values in the expected formats.
+
+```{{python}}
+def main():
+    #Given code
+    dollars = dollars_to_float(input("How much was the meal? "))
+    percent = percent_to_float(input("What percentage would you like to tip? "))
+    tip = dollars * percent
+    print(f"leave ${tip:.2f}")
+
+def dollars_to_float(d):
+    #Remove dollar sign
+    d = d.removeprefix("$")
+    #Convert to float value & return
+    d = float(d)
+    return(d)
+
+def percent_to_float(p):
+    #Remove Percent sign
+    p = p.removesuffix("%")
+    #Convert to float & return
+    p = float(p)/100
+    return(p)
+
+main()
+```
+
+# [**Playback Speed**](https://cs50.harvard.edu/python/2022/psets/0/playback/#playback-speed)
+
+Some people have a habit of lecturing speaking rather quickly, and it'd be nice to slow them down, a la YouTube's 0.75 playback speed, or even by having them pause between words.
+
+In a file called `playback.py`, implement a program in Python that prompts the user for input and then outputs that same input, replacing each space with `...` (i.e., three periods).
+
+```{{python}}
+def main():
+    #Get user input
+    user_input = input("What sentence would you like to slow down? ")
+
+    #Replace spaces with ellipses
+    user_input = user_input.replace(" ", "...")
+
+    #Print user input with Ellipses to slow down sentence
+    print(user_input)
+
+
+
+main()
+```
+
+# [**Indoor Voice**](https://cs50.harvard.edu/python/2022/psets/0/indoor/#indoor-voice)
+
+WRITING IN ALL CAPS IS LIKE YELLING.
+
+Best to use your "indoor voice" sometimes, writing entirely in lowercase.
+
+In a file called `indoor.py`, implement a program in Python that prompts the user for input and then outputs that same input in lowercase. Punctuation and whitespace should be outputted unchanged. You're welcome, but not required, to prompt the user explicitly, as by passing a `str` of your own as an argument to `input`.
+
+``` {{python}}
+def main():
+    #Get user input & Convert to lowercase
+    user_input = input("What would you like to say with an indoor voice? ").lower()
+
+    #Print user input
+    print(user_input)
+
+
+main()
+```
+
+# [**Making Faces**](https://cs50.harvard.edu/python/2022/psets/0/faces/#making-faces)
+
+Before there were emoji, there were [emoticons](https://en.wikipedia.org/wiki/List_of_emoticons), whereby text like `:)` was a happy face and text like `:(` was a sad face. Nowadays, programs tend to convert emoticons to emoji automatically!
+
+In a file called `faces.py`, implement a function called `convert` that accepts a `str` as input and returns that same input with any `:)` converted to ![🙂](https://twemoji.maxcdn.com/v/14.0.2/72x72/1f642.png){alt="🙂"} (otherwise known as a [slightly smiling face](https://emojipedia.org/slightly-smiling-face/)) and any `:(` converted to ![🙁](https://twemoji.maxcdn.com/v/14.0.2/72x72/1f641.png){alt="🙁"} (otherwise known as a [slightly frowning face](https://emojipedia.org/slightly-frowning-face/)). All other text should be returned unchanged.
+
+Then, in that same file, implement a function called `main` that prompts the user for input, calls `convert` on that input, and prints the result. You\'re welcome, but not required, to prompt the user explicitly, as by passing a `str` of your own as an argument to `input`. Be sure to call `main` at the bottom of your file.
+
+```{{python}}
+def main():
+    #Get user input
+    user_input = input("Please input the string for conversion: ")
+
+    #Call Convert to change emoticons to emoji
+    user_input = convert(user_input)
+
+    #Print back to user
+    print(user_input)
+
+
+
+def convert(sentence):
+    #Convert any happy faces to emoji
+    sentence = sentence.replace(":)", "\U0001F642")
+
+    #Convert any sad faces to emoji
+    sentence = sentence.replace(":(", "\U0001F641")
+
+    #Return original sentence as output of function
+    return(sentence)
+
+main()
+```

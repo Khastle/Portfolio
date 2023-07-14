@@ -1,0 +1,11 @@
+{
+  "hash": "e68668506619a090ac62e8d88386b9af",
+  "result": {
+    "markdown": "---\ntitle: Post With Plot\nauthor: Me\ndate: '2023-07-11'\ncategories:\n  - code\n  - analysis\n  - plot\nimage: image.jpg\n---\n\nThis is a post with plot.\n\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}

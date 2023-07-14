@@ -1,0 +1,31 @@
+{
+    "id": "CA49810D",
+    "path": "E:/Projects/Portfolio/posts/CS50 Lesson 1 Code/index.qmd",
+    "project_path": "posts/CS50 Lesson 1 Code/index.qmd",
+    "type": "quarto_markdown",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1689317292596.0,
+    "source_on_save": false,
+    "relative_order": 4,
+    "properties": {
+        "rmdVisualMode": "false",
+        "rmdVisualWrapConfigured": "true",
+        "source_window_id": "",
+        "Source": "Source",
+        "docOutlineVisible": "1",
+        "rmdVisualCollapsedChunks": "",
+        "rmdVisualModeLocation": "5778:2733.333251953125",
+        "cursorPosition": "122,37",
+        "scrollLine": "119"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1689319524,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1689319524853,
+    "read_only": false,
+    "read_only_alternatives": []
+}

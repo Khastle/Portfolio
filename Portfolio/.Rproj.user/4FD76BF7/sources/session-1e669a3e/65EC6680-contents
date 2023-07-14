@@ -1,0 +1,22 @@
+---
+title: "Ryan Curtis"
+image: profile.jpg
+about:
+  template: jolla
+  image-width: 20em
+  image-shape: round
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/ryan-curtis-559b48219/
+    - icon: github
+      text: Github
+      href: https://github.com/Khastle
+    - icon: envelope
+      text: Contact me
+      href: mailto:ryancurtisWA@gmail.com
+---
+
+I am the Community Court coordinator/statistician for Whitman County District Court. While my interest in Stats and data analysis began during my undergraduate education, my professional career in Data began in the courts.
+
+I intially used excel for most of my data needs, along with Buisiness Intelligence Tools to pull data from our court database. Eventually I realized that I needed to up my game and took it upon myself to begin learning Python! Since then I have created a number of visualizations and reports for the court for a plethora of purposes ranging from usage in grant applications to secure funding, to evaluations conducted by other agencies or the court itself. My time in the professional field of data has been brief but I am excited to further build both my analytical skills and career!
